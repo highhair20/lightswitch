@@ -4,6 +4,10 @@ var express = require('express')
 var app = express(); 
 app.use(bodyParser.json());
 
+app.get('/', function (req, res) {
+  res.send('Hello World!')
+})
+
 app.post('/receive', function (req, res) {
   var type = ;
 //   console.log(req.headers['x-amz-sns-message-type']);
