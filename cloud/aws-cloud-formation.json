@@ -11,6 +11,13 @@
       "ConstraintDescription" : "You must specify the environment."
     },
 
+    "TargetBucket" : {
+      "Description" : "The S3 bucket you wish to store logs in AWS.",
+      "Default" : "m2m-client-logs",
+      "Type" : "String",
+      "ConstraintDescription" : "You must specify the name of an S3 bucket."
+    },
+
     "ControllerPublicIP" : {
       "Description" : "Public IP Address of the controller.",
       "Default" : "x.x.x.x",
