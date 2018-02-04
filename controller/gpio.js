@@ -1,6 +1,5 @@
 // ref: https://webofthings.org/2016/10/23/node-gpio-and-the-raspberry-pi/
 
-// https://nodejs.org/en/download/
 
 // Import the onoff library
 var onoff = require('onoff');
@@ -15,12 +14,19 @@ exports.initialize = function (pin) {
 }
 
 exports.toggle = function (pin) {
-  // Synchronously read the value of pin 4 and transform 1 to 0 or 0 to 1
+  // Synchronously read the value of the pin and transform 1 to 0 or 0 to 1
   var value = (pins[pin].readSync() + 1) % 2;
   // Asynchronously write the new value to pin 4
-  plugs[pin].write(value, function() {
+  pins[pin].write(value, function() {
     console.log("Changed pin " + pin + " state to: " + value);
-  });  
+  });
+  return value;  
+}
+
+exports.getState = function (pin) {
+  // Synchronously read the value of the pin
+  var value = pins[pin].readSync()
+  return value
 }
 
 
