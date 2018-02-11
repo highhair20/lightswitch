@@ -10,17 +10,17 @@
       "AllowedValues" : ["prod"],
       "ConstraintDescription" : "You must specify the environment."
     },
-
+    
     "TargetBucket" : {
-      "Description" : "The S3 bucket you wish to store logs in AWS.",
-      "Default" : "glo-garbage",
+      "Description" : "The S3 bucket you wish to serve the Switch site from.",
+      "Default" : "glo-switchsite",
       "Type" : "String",
       "ConstraintDescription" : "You must specify the name of an S3 bucket."
     },
 
     "ControllerPublicIP" : {
       "Description" : "Public IP Address of the controller.",
-      "Default" : "x.x.x.x",
+      "Default" : "192.168.1.42",
       "Type" : "String",
       "ConstraintDescription" : "You must specify the public IP address of the controller."
     },
@@ -33,13 +33,12 @@
       "Properties": {
         "RoleName" : { "Fn::Join" : [ "-", [ "SwitchProxyRole", {"Ref" : "EnvironmentType"} ] ] },
         "Policies": [ {
-           "PolicyName": { "Fn::Join" : [ "-", [ "SwitchProxyPolicy", {"Ref" : "EnvironmentType"} ] ] },
+           "PolicyName": { "Fn::Join" : [ "-", [ "SwitchEventPolicy", {"Ref" : "EnvironmentType"} ] ] },
            "PolicyDocument": {
               "Version" : "2012-10-17",
               "Statement": [ {
                  "Effect": "Allow",
                   "Action": [
-                    "s3:Put*",
                     "s3:Get*"
                   ],
                   "Resource": [
@@ -64,7 +63,7 @@
         "Path": "/"
       }
     },
-
+    
     "SwitchProxyGroup" : {
        "Type" : "AWS::IAM::Group",
        "Properties" : {
@@ -74,7 +73,6 @@
           ]
        }
     },
- 
  
     "SwitchProxyUser" : {
        "Type" : "AWS::IAM::User",
@@ -121,7 +119,7 @@
                       "statusCode": "200"
                     }
                   },
-                  "uri": "http://66.214.6.50/switch",
+                  "uri": { "Fn::Join" : [ "/", [ "http:/", { "Ref" : "ControllerPublicIP" }, "switch" ] ] },
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "GET",
                   "type": "http_proxy"
@@ -180,7 +178,7 @@
                   "requestParameters": {
                     "integration.request.path.id": "method.request.path.id"
                   },
-                  "uri": "http://66.214.6.50/switch/{id}",
+                  "uri": { "Fn::Join" : [ "/", [ "http:/", { "Ref" : "ControllerPublicIP" }, "switch", "{id}" ] ] },
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "GET",
                   "type": "http_proxy"
@@ -208,7 +206,7 @@
                   "requestParameters": {
                     "integration.request.path.id": "method.request.path.id"
                   },
-                  "uri": "http://66.214.6.50/switch/{id}",
+                  "uri": { "Fn::Join" : [ "/", [ "http:/", { "Ref" : "ControllerPublicIP" }, "switch", "{id}" ] ] },
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "PUT",
                   "type": "http_proxy"
@@ -231,7 +229,91 @@
           }
         }
       }
+    },
+    
+    
+    "SwitchProxyDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": { "Ref": "SwitchProxyApi" },
+        "Description": "SwitchProxy deployment"
+      }
+    },
+
+    "SwitchProxyProdStage": {
+      "Type": "AWS::ApiGateway::Stage",
+      "DependsOn": [ "SwitchProxyApi", "SwitchProxyDeployment" ],
+      "Properties": {
+        "StageName": "prod",
+        "Description": "Prod Stage",
+        "RestApiId": { "Ref": "SwitchProxyApi" },
+        "DeploymentId": { "Ref": "SwitchProxyDeployment" },
+        "MethodSettings": [
+            {
+                "ResourcePath": "/",
+                "HttpMethod": "GET",
+                "MetricsEnabled": "true",
+                "DataTraceEnabled": "true",
+                "LoggingLevel": "INFO"
+            },
+            {
+                "ResourcePath": "/switch",
+                "HttpMethod": "GET",
+                "MetricsEnabled": "true",
+                "DataTraceEnabled": "true",
+                "LoggingLevel": "INFO"
+            },
+            {
+                "ResourcePath": "/switch/{id}",
+                "HttpMethod": "GET",
+                "MetricsEnabled": "true",
+                "DataTraceEnabled": "true",
+                "LoggingLevel": "INFO"
+            },
+            {
+                "ResourcePath": "/switch/{id}",
+                "HttpMethod": "PUT",
+                "MetricsEnabled": "true",
+                "DataTraceEnabled": "true",
+                "LoggingLevel": "INFO"
+            }
+        ]
+
+      }
+    },
+
+    "SwitchProxyUsagePlan" : {
+      "Type" : "AWS::ApiGateway::UsagePlan",
+      "Properties" : {
+        "ApiStages" : [ { "ApiId" : { "Ref" : "SwitchProxyApi" }, "Stage" : { "Ref" : "SwitchProxyProdStage" }} ],
+        "UsagePlanName" : "SwitchProxyPlan"
+      }
+    },
+
+    "SwitchProxyApiKey": {
+      "Type": "AWS::ApiGateway::ApiKey",
+      "DependsOn": [ "SwitchProxyDeployment"],
+      "Properties": {
+        "Name": "SwitchProxyApiKey",
+        "Description": "CloudFormation API Key for SwitchProxy",
+        "Enabled": "true",
+        "StageKeys": [{
+          "RestApiId": { "Ref": "SwitchProxyApi" },
+          "StageName": { "Ref" : "SwitchProxyProdStage" }
+        }]
+      }
+    },
+
+    "SwitchProxyUsagePlanKey" : {
+      "Type": "AWS::ApiGateway::UsagePlanKey",
+      "DependsOn": [ "SwitchProxyApiKey", "SwitchProxyUsagePlan" ],
+      "Properties": {
+        "KeyId" : { "Ref" : "SwitchProxyApiKey" },
+        "KeyType" : "API_KEY",
+        "UsagePlanId" : {"Ref" : "SwitchProxyUsagePlan"}
+      }
     }
+    
   },
 
   "Outputs": {
