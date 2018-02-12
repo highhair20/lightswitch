@@ -101,17 +101,43 @@
             "version": "2016-10-13T23:04:43Z",
             "title": "SwitchProxy"
           },
-          "host": "q027fw4q5i.execute-api.us-east-1.amazonaws.com",
-          "basePath": "/prod",
+          "host": "switch.glolabs.com",
           "schemes": [
             "https"
           ],
           "paths": {
-            "/switch": {
+            "/": {
               "get": {
                 "produces": [
-                  "application/json"
+                  "text/html"
                 ],
+                "responses": {
+                  "200": {
+                    "description": "200 response"
+                  }
+                },
+                "x-amazon-apigateway-integration": {
+                  "credentials": { "Fn::GetAtt" : ["SwitchProxyRole", "Arn"] },
+                  "responses": {
+                    "4\\d{2}": {
+                      "statusCode": "400"
+                    },
+                    "default": {
+                      "statusCode": "200",
+                    },
+                    "5\\d{2}": {
+                      "statusCode": "500"
+                    }
+                  },
+                  "uri": { "Fn::Join" : [ "/", [ "arn:aws:apigateway:us-east-1:s3:path", {"Ref" : "TargetBucket"} ] ] },
+                  "passthroughBehavior": "when_no_match",
+                  "httpMethod": "GET",
+                  "type": "aws"
+                }
+              }
+            },
+            "/switch": {
+              "get": {
                 "responses": {},
                 "x-amazon-apigateway-integration": {
                   "responses": {
@@ -119,7 +145,7 @@
                       "statusCode": "200"
                     }
                   },
-                  "uri": { "Fn::Join" : [ "/", [ "http:/", { "Ref" : "ControllerPublicIP" }, "switch" ] ] },
+                  "uri": "http://66.214.6.50/switch",
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "GET",
                   "type": "http_proxy"
@@ -128,9 +154,6 @@
             },
             "/switch/{id}": {
               "get": {
-                "produces": [
-                  "application/json"
-                ],
                 "parameters": [
                   {
                     "name": "id",
@@ -178,16 +201,13 @@
                   "requestParameters": {
                     "integration.request.path.id": "method.request.path.id"
                   },
-                  "uri": { "Fn::Join" : [ "/", [ "http:/", { "Ref" : "ControllerPublicIP" }, "switch", "{id}" ] ] },
+                  "uri": "http://66.214.6.50/switch/{id}",
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "GET",
                   "type": "http_proxy"
                 }
               },
               "put": {
-                "produces": [
-                  "application/json"
-                ],
                 "parameters": [
                   {
                     "name": "id",
@@ -206,7 +226,7 @@
                   "requestParameters": {
                     "integration.request.path.id": "method.request.path.id"
                   },
-                  "uri": { "Fn::Join" : [ "/", [ "http:/", { "Ref" : "ControllerPublicIP" }, "switch", "{id}" ] ] },
+                  "uri": "http://66.214.6.50/switch/{id}",
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "PUT",
                   "type": "http_proxy"

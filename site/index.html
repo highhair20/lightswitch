@@ -1,89 +1,25 @@
 <html>
-    <head>
-        <title>Glo Labs - Switch</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-    </head>
-    <body>
-        <div id="logo">glo</div>
-        <div id="tagline"></div>
+  <head>
+    <title>Switch - from GloLabs</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <div id="logo">switch.</div>
+<!--     <div id="tagline"></div> -->
+<!--     <div><div id="aws-logo">AWS</div></div> -->
         
-        <style>
-            body {
-                background: #29477f;
-                color: #ffffff; 
-            }
-            #logo {
-                font-family: "Helvetica Neue";
-                font-size: 220px;
-                font-weight: bold;
-                letter-spacing: -10px;
-                margin: auto;
-                position: relative;
-                text-align: center;
-                text-shadow: 0 0 6px #FFFF33, 0 0 12px #FFDD33, 0 0 24px #FF8800, 0 0 48px #FF2200;
-                top:100px;
-            }
-            #tagline {
-                font-family:"Trebuchet MS";
-                font-size: 30px;
-                font-weight:100;
-                margin: auto;
-                position: relative;
-                text-align:center;
-                top:100px;
-            }
-        </style>
-        
-        <script type="text/javascript">  
-            var intervalId;
-            var cycleInterval = 50;
-            var startRadius = 6;
-            var radius = 6;
-            var maxRadius = 48;
-            
-            var from = 1000*2; // 1 seconds
-            var to = 1000*5; // 3 seconds
-            setTimeout(startGloing, Math.floor(Math.random() * (to - from + 1) + from));
-            
-            function startGloing() {
-                intervalId = setInterval(gloText, cycleInterval);  
-             }  
-              
-            function gloText() {
-                var node = document.getElementById('logo');
-                node.style.textShadow = "0 0 " + radius + "px #FFFF33, 0 0 12px #FFDD33, 0 0 24px #FF8800, 0 0 48px #FF2200";
-                if (radius == maxRadius) {
-                    clearInterval(intervalId);
-                    intervalId = setInterval(unGloText, cycleInterval);
-                } else {
-                    radius = radius * 2;
-                }
-            }
-            
-            function unGloText() {
-                var node = document.getElementById('logo'); 
-                node.style.textShadow = "0 0 " + radius + "px #FFFF33, 0 0 12px #FFDD33, 0 0 24px #FF8800, 0 0 48px #FF2200";
-                if (radius == startRadius) {
-                    clearInterval(intervalId);
-                    var from = 1000*60*.5 // 30 seconds
-                    var to = 1000*60*1; // 1 minute
-                    setTimeout(startGloing, Math.floor(Math.random() * (to - from + 1) + from));
-                } else {
-                    radius = radius / 2;
-                }
-            }
-        </script>
-        
-        <script type="text/javascript">
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-26030902-1']);
-            _gaq.push(['_trackPageview']);
-            (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
-        </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-113879213-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'UA-113879213-1');
+    </script>
 
-    </body>
+    <script async src="./js/main.js"></script>    
+  </body>
 </html>

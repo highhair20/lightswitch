@@ -1,0 +1,42 @@
+/* todo: use keyframes and transform animation */
+
+body {
+/*              background: #29477f; */
+  background: #000;
+  color: #ffffff; 
+}
+#logo {
+  font-family: "Ubuntu", "Helvetica Neue";
+  font-size: 220px;
+  font-weight: bold;
+  letter-spacing: -10px;
+  margin: auto;
+  position: relative;
+  text-align: center;
+/*                 text-shadow: 0 0 6px #7899D6, 0 0 12px #93ADDE, 0 0 24px #AEC1E6, 0 0 48px #C9D6EE; */
+  text-shadow: 0 0 6px #7899D6, 0 0 12px #93ADDE, 0 0 24px #AEC1E6, 0 0 48px #C9D6EE;                
+  top:200px;
+}
+#tagline {
+  font-family: "Ubuntu", "Trebuchet MS";
+  font-size: 30px;
+  font-weight:100;
+  margin: auto;
+  position: relative;
+  text-align:center;
+  top:100px;
+}
+
+#aws-logo {
+  position: relative;
+  top: 50%;
+  margin-top: -12px;
+  margin-left: 60px;
+  margin-right: 38px;
+  width: 41px;
+  height: 24px;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cud…s6aHJlZj0iI1NWR0lEXzJfIiBvdmVyZmxvdz0idmlzaWJsZSIvPjwvY2xpcFBhdGg+PC9zdmc+);
+  background-position: center;
+  background-size: contain;
+  text-indent: -9999em;
+}
