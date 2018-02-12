@@ -13,7 +13,7 @@ var app = express();
 app.use(bodyParser.json());
 
 // list stations and state
-app.get('/station', function (req, res) {
+app.get('/switch', function (req, res) {
   var re = []
   for (var i=0; i < pins.length; i++) {
     re.push({
@@ -25,7 +25,7 @@ app.get('/station', function (req, res) {
 });
 
 // toggle the state
-app.put('/station/:id', function (req, res) {
+app.put('/switch/:id', function (req, res) {
   var id = parseInt(req.params.id)
   console.log(pins);
   console.log(id);
