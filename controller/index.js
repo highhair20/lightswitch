@@ -33,7 +33,7 @@ app.get('/switch/:id', function (req, res) {
     res.statusCode = 404;
     return res.json({ status: -100 });
   }
-  var value = gpio.getState(pins[i])
+  var value = gpio.getState(id)
   return res.json({ status : 1, state : value })
 });
 
