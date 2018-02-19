@@ -12,6 +12,7 @@ for (var i=0; i < pins.length; i++) {
 var app = express(); 
 app.use(bodyParser.json());
 
+//
 // list stations and state
 app.get('/switch', function (req, res) {
   var re = []
@@ -24,7 +25,20 @@ app.get('/switch', function (req, res) {
   res.send(re)
 });
 
-// toggle the state
+//
+// get the state of the specified station
+app.get('/switch/:id', function (req, res) {
+  var id = parseInt(req.params.id)
+  if (pins.indexOf(id) == -1) {
+    res.statusCode = 404;
+    return res.json({ status: -100 });
+  }
+  var value = gpio.getState(pins[i])
+  return res.json({ status : 1, state : value })
+});
+
+//
+// toggle the station
 app.put('/switch/:id', function (req, res) {
   var id = parseInt(req.params.id)
   console.log(pins);
