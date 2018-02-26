@@ -56,6 +56,17 @@ cd switch/controller
 npm install
 ```
 
+sudo apt-get --save install pigpio
+npm install --save pigpio
+
+
+
+
+
+
+
+sudo pip install pi-plates
+
 
 
 

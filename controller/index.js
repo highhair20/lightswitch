@@ -2,11 +2,43 @@ var express = require('express')
   , bodyParser = require('body-parser')
   , gpio = require('./gpio');
 
-// initialize all pins
-var pins = [4,17,27,22]
-for (var i=0; i < pins.length; i++) {
+// initialize all pins and map pins to stations
+var pins = {
+  1:  4,
+  2: 17,
+  3: 27,
+  4: 22
+}
+for (var i in pins) {
   gpio.initialize(pins[i]); 
 }
+
+//
+// pulse the blue LED
+var Gpio = require('pigpio').Gpio,
+  led = new Gpio(pins[4], {mode: Gpio.OUTPUT}),
+  dutyCycle = 0,
+  phase = 'glo';
+setInterval(function () {
+  console.log(dutyCycle);
+  led.pwmWrite(dutyCycle);
+  if (phase == 'glo') {
+    if (dutyCycle == 255) {
+      phase = 'dim';
+    } else {
+      dutyCycle += 5;
+    }
+  } 
+  if (phase == 'dim') {
+    if (dutyCycle == 0) {
+      phase = 'glo';
+    } else {
+      dutyCycle -= 5;
+    }
+  }
+}, 20);
+
+
 
 //
 var app = express(); 
@@ -14,11 +46,12 @@ app.use(bodyParser.json());
 
 //
 // list stations and state
-app.get('/switch', function (req, res) {
+app.get('/station', function (req, res) {
   var re = []
-  for (var i=0; i < pins.length; i++) {
+  for (var i in pins) {
+    console.log('pin: ' + i)
     re.push({
-      id : pins[i],
+      id : i,
       state : gpio.getState(pins[i])
     });
   }
@@ -27,53 +60,31 @@ app.get('/switch', function (req, res) {
 
 //
 // get the state of the specified station
-app.get('/switch/:id', function (req, res) {
+app.get('/station/:id', function (req, res) {
   var id = parseInt(req.params.id)
-  if (pins.indexOf(id) == -1) {
+  if (!pins.hasOwnProperty(id)) {
     res.statusCode = 404;
     return res.json({ status: -100 });
   }
-  var value = gpio.getState(id)
+  var value = gpio.getState(pins[id])
   return res.json({ status : 1, state : value })
 });
 
 //
 // toggle the station
-app.put('/switch/:id', function (req, res) {
+app.put('/station/:id', function (req, res) {
   var id = parseInt(req.params.id)
-  console.log(pins);
-  console.log(id);
-  console.log(pins.indexOf(id))
-  if (pins.indexOf(id) == -1) {
+  if (!pins.hasOwnProperty(id)) {
     res.statusCode = 404;
     return res.json({ status: -100 });
   }
-  var value = gpio.toggle(id)
+  var value = gpio.toggle(pins[id])
   return res.json({ status : 1, state : value })
 });
   
   
   
 
-app.post('/receive', function (req, res) {
-//   console.log(req.headers['x-amz-sns-message-type']);
-  validateRequest(req.heaaders);
-  
-  switch (req.headers['x-amz-sns-message-type']) {
-    case 'SubscriptionConfirmation':
-      subscriptionConfirmation(req.body);
-      break;
-    case 'Notification':
-      notification(req.body);
-      break;
-    case 'UnsubscribeConfirmation':
-      unsubscribeConfirmation(req.body);
-      break;
-    
-  }
-  
-  res.send({status: 'success'})
-})
 
 
 var PORT = process.argv[2] || 9000;
@@ -83,17 +94,3 @@ var server = app.listen(PORT, function () {
 	console.log('Example app listening at http://%s:%s', host, port);
 });
 
-
-function subscriptionConfirmation(body) {
-  console.log(body);
-  // visit SubscribeURL
-  
-}
-
-function notification(body) {
-  
-}
-
-function unsubscribeConfirmation(body) {
-  
-}

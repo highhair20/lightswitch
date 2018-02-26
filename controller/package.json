@@ -12,6 +12,7 @@
     "aws-snsclient": "^0.2.0",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "onoff": "^1.1.9"
+    "onoff": "^1.1.9",
+    "pigpio": "^0.6.4"
   }
 }
