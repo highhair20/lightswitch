@@ -145,7 +145,7 @@
                       "statusCode": "200"
                     }
                   },
-                  "uri": "http://66.214.6.50/switch",
+                  "uri": "http://66.214.6.50:9001/switch",
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "GET",
                   "type": "http_proxy"
@@ -201,7 +201,7 @@
                   "requestParameters": {
                     "integration.request.path.id": "method.request.path.id"
                   },
-                  "uri": "http://66.214.6.50/switch/{id}",
+                  "uri": "http://66.214.6.50:9001/switch/{id}",
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "GET",
                   "type": "http_proxy"
@@ -226,7 +226,7 @@
                   "requestParameters": {
                     "integration.request.path.id": "method.request.path.id"
                   },
-                  "uri": "http://66.214.6.50/switch/{id}",
+                  "uri": "http://66.214.6.50:9001/switch/{id}",
                   "passthroughBehavior": "when_no_match",
                   "httpMethod": "PUT",
                   "type": "http_proxy"
